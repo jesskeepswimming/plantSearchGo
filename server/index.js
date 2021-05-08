@@ -105,7 +105,7 @@ app.get("/posts/:plant_id", async(req, res)=> {
         const params = req.params;
         const vars = [params.plant_id];
 
-        const results  = await pool.query("SELECT * FROM plant_posts WHERE plant_id = $1 ORDER BY date_posted", vars)
+        const results  = await pool.query("SELECT * FROM plant_posts WHERE plant_id = $1 ORDER BY date_posted DESC", vars)
 
         res.json(results.rows)
 
