@@ -34,7 +34,7 @@ const useStyles = makeStyles((theme) => ({
   
   export function TitlebarGridList(props) {
     const itemData = props.itemData
-    const {image, nickname, plant, plant_id, user_id, for_sale} = props.plant
+    const {image, variety, plant, plant_id, user_id, for_sale} = props.plant
 
     const classes = useStyles();
   
@@ -42,7 +42,7 @@ const useStyles = makeStyles((theme) => ({
       <div className={classes.root}>
         <GridList cellHeight={300} className={classes.gridList} cols = {1}>
           <GridListTile key="Subheader" cols={1} style={{ height: 'auto' }}>
-        <ListSubheader component="div">{nickname} by {user_id}</ListSubheader>
+        <ListSubheader component="div">{variety} by {user_id}</ListSubheader>
           </GridListTile>
           {itemData.map((tile) => (
             <GridListTile key={tile.post_id}>
@@ -112,7 +112,7 @@ const styles = (theme) => ({
   
 export default function PostDialog(props) {
     // const card = props.card
-    const {image, nickname, plant, plant_id, user_id, for_sale} = props.card
+    const {image, variety, plant, plant_id, user_id, for_sale} = props.card
     const [open, setOpen] = React.useState(false);
     const [ itemData, setItemData ] = React.useState([]);
 
@@ -133,7 +133,7 @@ export default function PostDialog(props) {
   
     const handleClickOpen = () => {
         onFetchData()
-        console.log(image, nickname, plant, plant_id, user_id, for_sale)
+        console.log(image, variety, plant, plant_id, user_id, for_sale)
         setOpen(true);
     };
     const handleClose = () => {

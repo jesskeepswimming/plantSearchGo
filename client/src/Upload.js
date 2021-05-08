@@ -61,7 +61,7 @@ export function VerticalLinearStepper(props) {
   const [stage, setStage] = useState("Seed")
   const [forSale, setForSale] = useState(false)
   const [plant, setPlant] = useState("")
-  const [nickname, setNickname] = useState("")
+  const [variety, setvariety] = useState("")
   const [caption, setCaption] = useState("")
   const [uploadStatus, setUploadStatus] = useState("")
 
@@ -73,14 +73,21 @@ export function VerticalLinearStepper(props) {
     setImageAsFile(imageAsFile => (image))
   }
 
+
+  const imageFileType = (name) => {
+    if (name.endsWith(".jpg") || name.endsWith(".jpeg") || name.endsWith(".png")) return true
+
+    return false
+  }
+
   const handleFireBaseUpload = (user = props.user) => {
     // e.preventDefault()
     console.log('start of upload')
     // async magic goes here...
 
-    if(imageAsFile === '' ) {
-        console.error(`not an image, the image file is a ${typeof(imageAsFile)}`)
-        setUploadStatus("error")
+    if(imageAsFile === '' || !imageFileType(imageAsFile.name) ) {
+        let errorMsg = `file must be a jpeg/png image`
+        setUploadStatus("error: " +errorMsg)
     } else{
         var current = new Date().valueOf();
         const url = `/images/${current}${imageAsFile.name}`
@@ -93,7 +100,7 @@ export function VerticalLinearStepper(props) {
             // Observe state change events such as progress, pause, and resume
             // Get task progress, including the number of bytes uploaded and the total number of bytes to be uploaded
             var progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-            setUploadStatus(progress)
+            setUploadStatus(progress + '%')
             console.log('Upload is ' + progress + '% done');
             switch (snapshot.state) {
                 case firebase.storage.TaskState.PAUSED: // or 'paused'
@@ -146,7 +153,7 @@ export function VerticalLinearStepper(props) {
             plant: plantName,
             for_sale: forSale,
             image: downloadURL,
-            nickname: nickname,
+            variety: variety,
             stage: stage,
             caption: caption
         }
@@ -215,7 +222,7 @@ export function VerticalLinearStepper(props) {
                        <TextField required id="standard-required" label="Plant" defaultValue="" onChange={e => setPlant(e.target.value)} />
                   </div>
                   <div>
-                      <TextField id="standard-required" label="Variety" defaultValue={""} onChange={e => setNickname(e.target.value)}/>
+                      <TextField id="standard-required" label="Variety " defaultValue={""} onChange={e => setvariety(e.target.value)}/>
                   </div>
                   <div>
                   <FormControlLabel
@@ -315,7 +322,7 @@ export function VerticalLinearStepper(props) {
         ))}
       </Stepper>
       <Snackbar open={open} 
-       message={uploadStatus + '%'}
+       message={uploadStatus}
        action={
          <React.Fragment>
            <IconButton size="small" aria-label="close" color="inherit" onClick={handleClose}>

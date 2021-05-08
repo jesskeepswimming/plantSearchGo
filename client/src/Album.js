@@ -87,7 +87,7 @@ export default function Album(props) {
 
     // e.preventDefault();
     try {
-      const response = await fetch("http://localhost:5000/plants")
+      const response = await fetch("http://localhost:5000/plants/search")
       const jsonData = await response.json()
 
       console.log(jsonData)

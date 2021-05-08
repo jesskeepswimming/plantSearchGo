@@ -65,14 +65,22 @@ export function Steps(props) {
     setImageAsFile(imageAsFile => (image))
   }
 
+  const imageFileType = (name) => {
+    if (name.endsWith(".jpg") || name.endsWith(".jpeg") || name.endsWith(".png")) return true
+
+    return false
+  }
+
   const handleFireBaseUpload = e => {
     // e.preventDefault()
     console.log('start of upload')
     // async magic goes here...
 
-    if(imageAsFile === '' ) {
+    if(imageAsFile === '' || !imageFileType(imageAsFile.name)) {
         console.error(`not an image, the image file is a ${typeof(imageAsFile)}`)
-    } else{
+        let errorMsg = `file must be a jpeg/png image`
+        setUploadStatus("error: " +errorMsg)
+      } else{
         var current = new Date().valueOf();
         const url = `/images/${current}${imageAsFile.name}`
         const imageRef = storageRef.child(url)
@@ -84,7 +92,7 @@ export function Steps(props) {
             // Observe state change events such as progress, pause, and resume
             // Get task progress, including the number of bytes uploaded and the total number of bytes to be uploaded
             var progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-            setUploadStatus(progress)
+            setUploadStatus(progress+ "%")
 
             console.log('Upload is ' + progress + '% done');
             switch (snapshot.state) {
@@ -240,6 +248,7 @@ export function Steps(props) {
                     color="primary"
                     onClick={activeStep === steps.length - 1 ? handleSubmit : handleNext}
                     className={classes.button}
+                    disabled={uploadStatus != ""}
                   >
                     {activeStep === steps.length - 1 ? 'Finish' : 'Next'}
                   </Button>
@@ -250,7 +259,7 @@ export function Steps(props) {
         ))}
       </Stepper>
       <Snackbar open={open} 
-       message={uploadStatus+ '%'}
+       message={uploadStatus}
        action={
          <React.Fragment>
            <IconButton size="small" aria-label="close" color="inherit" onClick={handleClose}>
