@@ -9,6 +9,7 @@ CREATE TABLE users(
 
 CREATE TABLE plant_profiles(
     plant_id SERIAL PRIMARY KEY,
+    last_updated TIMESTAMP default CURRENT_TIMESTAMP,
     user_id VARCHAR(255),
     plant VARCHAR(255),
     for_sale BOOLEAN,

@@ -54,12 +54,17 @@ app.post("/posts", async(req, res)=> {
     try { 
         const body =  req.body;        
         const varsPost = [body.plant_id, body.stage, body.caption, body.image];
-        const varsUpdate = [body.image, body.plant_id];
 
-        const newPost = await pool.query("INSERT INTO plant_posts (plant_id, stage, caption, image) VALUES($1, $2, $3, $4) RETURNING post_id ", varsPost)
-        const updateProfile = await pool.query("UPDATE plant_profiles SET image = $1 WHERE plant_id = $2", varsUpdate)
+        const newPost = await pool.query("INSERT INTO plant_posts (plant_id, stage, caption, image) VALUES($1, $2, $3, $4) RETURNING post_id, date_posted ", varsPost)
 
-        res.json(newPost.rows[0])
+        const returnVal = newPost.rows[0]
+        console.log(returnVal.date_posted)
+
+        const varsUpdate = [body.image, returnVal.date_posted , body.plant_id];
+
+        const updateProfile = await pool.query("UPDATE plant_profiles SET image = $1, last_updated = $2 WHERE plant_id = $3", varsUpdate)
+
+        res.json(returnVal)
 
     } catch (err) {
         console.error(err.message);
@@ -70,7 +75,7 @@ app.post("/posts", async(req, res)=> {
 app.get("/plants", async(req, res)=> {
     try { 
  
-        const allPosts  = await pool.query("SELECT * FROM plant_profiles")
+        const allPosts  = await pool.query("SELECT * FROM plant_profiles ORDER BY last_updated DESC")
         res.json(allPosts.rows)
 
     } catch (err) {
