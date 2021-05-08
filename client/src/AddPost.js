@@ -1,4 +1,4 @@
-import React, {useState}from 'react';
+import React, {useState, useEffect}from 'react';
 import { withStyles, makeStyles } from '@material-ui/core/styles';
 import Button from '@material-ui/core/Button';
 import Dialog from '@material-ui/core/Dialog';
@@ -23,6 +23,7 @@ import FormHelperText from '@material-ui/core/FormHelperText';
 import FormControl from '@material-ui/core/FormControl';
 import Select from '@material-ui/core/Select';
 import AddIcon from '@material-ui/icons/Add';
+import Snackbar from '@material-ui/core/Snackbar';
 
 
 import {storage, firebase} from './App'
@@ -54,6 +55,7 @@ export function Steps(props) {
   const [imageAsUrl, setImageAsUrl] = useState('')
   const [stage, setStage] = useState("Seed")
   const [caption, setCaption] = useState("")
+  const [uploadStatus, setUploadStatus] = useState("")
 
   const storageRef = storage.ref();
 
@@ -82,6 +84,8 @@ export function Steps(props) {
             // Observe state change events such as progress, pause, and resume
             // Get task progress, including the number of bytes uploaded and the total number of bytes to be uploaded
             var progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+            setUploadStatus(progress)
+
             console.log('Upload is ' + progress + '% done');
             switch (snapshot.state) {
                 case firebase.storage.TaskState.PAUSED: // or 'paused'
@@ -94,6 +98,8 @@ export function Steps(props) {
             }, 
             (error) => {
             // Handle unsuccessful uploads
+            setUploadStatus("error")
+
                 console.log("error")
             }, 
             () => {
@@ -103,8 +109,9 @@ export function Steps(props) {
                   console.log('File available at', downloadURL);
                   setImageAsUrl(downloadURL)
                   onPostData(downloadURL)
-                  props.handleClose();
-                  props.reloadFunction();
+                  setUploadStatus("success")
+
+                  
                 });
               }
         ); 
@@ -146,10 +153,8 @@ export function Steps(props) {
   }
 
   const handleSubmit =  () => {
-    
+    setOpen(true)
     const success = handleFireBaseUpload()
-    console.log(success)
-    props.handleClose();
 
   };
 
@@ -197,6 +202,26 @@ export function Steps(props) {
         return 'Unknown step';
     }
   }
+
+  const [open, setOpen] = useState(false)
+
+  const handleClose = (event, reason) => {
+    if (reason === 'clickaway') {
+      return;
+    }
+
+    setOpen(false);
+  };
+
+  useEffect(() => {
+    // Update the document title using the browser API
+    if (uploadStatus == "success") {
+      props.handleClose()
+      props.reloadFunction();
+    }
+    
+  }, [uploadStatus]);
+
   
 
   return (
@@ -224,6 +249,17 @@ export function Steps(props) {
           </Step>
         ))}
       </Stepper>
+      <Snackbar open={open} 
+       message={uploadStatus+ '%'}
+       action={
+         <React.Fragment>
+           <IconButton size="small" aria-label="close" color="inherit" onClick={handleClose}>
+             <CloseIcon fontSize="small" />
+           </IconButton>
+         </React.Fragment>
+       }>
+       
+      </Snackbar>
     
     </div>
   );

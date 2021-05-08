@@ -42,7 +42,7 @@ const useStyles = makeStyles((theme) => ({
       <div className={classes.root}>
         <GridList cellHeight={300} className={classes.gridList} cols = {1}>
           <GridListTile key="Subheader" cols={1} style={{ height: 'auto' }}>
-        <ListSubheader component="div">{plant} by {user_id}</ListSubheader>
+        <ListSubheader component="div">{nickname} by {user_id}</ListSubheader>
           </GridListTile>
           {itemData.map((tile) => (
             <GridListTile key={tile.post_id}>
@@ -147,7 +147,7 @@ export default function PostDialog(props) {
         </Button>
         <Dialog onClose={handleClose} aria-labelledby="customized-dialog-title" open={open}>
           <DialogTitle id="customized-dialog-title" onClose={handleClose}>
-            {nickname}
+            {plant}
           </DialogTitle>
           <DialogContent dividers>
           <TitlebarGridList itemData={itemData} plant ={props.card}/>

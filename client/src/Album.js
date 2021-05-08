@@ -210,10 +210,10 @@ export default function Album(props) {
                     />
                     <CardContent className={classes.cardContent}>
                       <Typography gutterBottom variant="h5" component="h2">
-                        {card.nickname}
+                        {card.plant}
                       </Typography>
-                      <Typography>
-                       {card.plant} 
+                      <Typography> 
+                        by {!user || card.user_id != user.email ?  (card.user_id.startsWith("anon-user") ? "Anonymous" : card.user_id) : "Me"} 
                       </Typography>
                     </CardContent>
                     <CardActions>

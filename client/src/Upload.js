@@ -73,7 +73,7 @@ export function VerticalLinearStepper(props) {
     setImageAsFile(imageAsFile => (image))
   }
 
-  const handleFireBaseUpload = e => {
+  const handleFireBaseUpload = (user = props.user) => {
     // e.preventDefault()
     console.log('start of upload')
     // async magic goes here...
@@ -116,9 +116,8 @@ export function VerticalLinearStepper(props) {
                 uploadTask.snapshot.ref.getDownloadURL().then((downloadURL) => {
                   console.log('File available at', downloadURL);
                   setImageAsUrl(downloadURL)
-                  onPostData(downloadURL)
+                  onPostData(downloadURL, user)
                   setUploadStatus("success")
-                  props.reloadFunction();
                 });
               }
         ); 
@@ -136,19 +135,18 @@ export function VerticalLinearStepper(props) {
     setActiveStep((prevActiveStep) => prevActiveStep - 1);
   };
 
-  const onPostData = async (downloadURL) => {
+  const onPostData = async (downloadURL, user) => {
 
     try {
-        const email = props.user ? props.user.email : "anonymous"
+        const email = user ? user.email : "anonymous"
         const plantName = plant? plant: "Unknown Plant"
-        const nicknameShown = nickname ? nickname : email + "'s " + plantName
 
         const body = {
             user_id : email,
-            plant: plant,
+            plant: plantName,
             for_sale: forSale,
             image: downloadURL,
-            nickname: nicknameShown,
+            nickname: nickname,
             stage: stage,
             caption: caption
         }
@@ -166,32 +164,38 @@ export function VerticalLinearStepper(props) {
     }
   }
 
-  const handleSubmit =  () => {
+  const handleSubmit = async () => {
     setOpen(true)
 
     // check if signed in, if not, vreate anonymous session
     if (!props.user) {
-      firebase.auth().signInAnonymously()
+      await firebase.auth().signInAnonymously()
       .then((result) => {
         console.log(result.user)
 
         const tempUser = {
           'uid': result.user.uid,
-          'email': "user"+result.user.uid,
+          'email': "anon-user-"+result.user.uid,
           'isAnonymous': true
         }
         props.setUserFunction(tempUser)
+
+        handleFireBaseUpload(tempUser)
         // setCurrentUser(tempUser)
         // Signed in..
       })
       .catch((error) => {
         var errorCode = error.code;
         var errorMessage = error.message;
+        console.log(error.message)
         // ...
       });
+     
+    } else {
+      handleFireBaseUpload()
     }
     
-    const success = handleFireBaseUpload()
+   
     // props.handleClose();
 
   };
@@ -279,6 +283,7 @@ export function VerticalLinearStepper(props) {
     // Update the document title using the browser API
     if (uploadStatus == "success") {
       props.handleClose()
+      props.reloadFunction();
     }
     
   }, [uploadStatus]);
@@ -299,6 +304,7 @@ export function VerticalLinearStepper(props) {
                     color="primary"
                     onClick={activeStep === steps.length - 1 ? handleSubmit : handleNext}
                     className={classes.button}
+                    disabled={uploadStatus != ""}
                   >
                     {activeStep === steps.length - 1 ? 'Finish' : 'Next'}
                   </Button>
@@ -309,7 +315,7 @@ export function VerticalLinearStepper(props) {
         ))}
       </Stepper>
       <Snackbar open={open} 
-       message={uploadStatus}
+       message={uploadStatus + '%'}
        action={
          <React.Fragment>
            <IconButton size="small" aria-label="close" color="inherit" onClick={handleClose}>
