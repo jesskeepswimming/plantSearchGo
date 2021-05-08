@@ -1,7 +1,6 @@
 import React, {useState, useEffect} from 'react';
 import AppBar from '@material-ui/core/AppBar';
 import Button from '@material-ui/core/Button';
-import CameraIcon from '@material-ui/icons/PhotoCamera';
 import Card from '@material-ui/core/Card';
 import CardActions from '@material-ui/core/CardActions';
 import CardContent from '@material-ui/core/CardContent';
@@ -20,6 +19,7 @@ import { Badge } from '@material-ui/core';
 import AddIcon from '@material-ui/icons/Add';
 import DeleteIcon from '@material-ui/icons/Delete';
 import AddPost from './AddPost';
+import EcoIcon from '@material-ui/icons/Eco';
 
 function Copyright() {
   return (
@@ -119,9 +119,9 @@ export default function Album(props) {
       <CssBaseline />
       <AppBar position="relative">
         <Toolbar>
-          <CameraIcon className={classes.icon} />
+          <EcoIcon className={classes.icon} />
           <Typography variant="h6" color="inherit" noWrap>
-            Album layout
+            Plantsta
           </Typography>
         </Toolbar>
       </AppBar>
@@ -129,13 +129,12 @@ export default function Album(props) {
         {/* Hero unit */}
         <div className={classes.heroContent}>
           <Container maxWidth="sm">
-            <Typography component="h1" variant="h2" align="center" color="textPrimary" gutterBottom>
-              Album layout
+            <Typography component="h1" variant="h3" align="center" color="textPrimary" gutterBottom>
+              Welcome to Plantsta!
             </Typography>
-            <Typography variant="h5" align="center" color="textSecondary" paragraph>
-              Something short and leading about the collection below—its contents, the creator, etc.
-              Make it short and sweet, but not too short so folks don&apos;t simply skip over it
-              entirely.
+            <Typography variant="h6" align="center" color="textSecondary" paragraph>
+              Document the lifecycle of your plants from seed to maturity! Explore other plant journeys by clicking "view" on a plant profile. Optionally list your plant for sale and connect with other sellers for plant trades. 
+              Upload a plant profile anonymously, or connect with Google to add updates to your plant journeys and enable buyers to connect with you.   
             </Typography>
             <div className={classes.heroButtons}>
               <Grid container spacing={2} justify="center">

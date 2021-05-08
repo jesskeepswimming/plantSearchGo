@@ -215,7 +215,7 @@ export function VerticalLinearStepper(props) {
                        <TextField required id="standard-required" label="Plant" defaultValue="" onChange={e => setPlant(e.target.value)} />
                   </div>
                   <div>
-                      <TextField id="standard-required" label="Nickname" defaultValue={""} onChange={e => setNickname(e.target.value)}/>
+                      <TextField id="standard-required" label="Variety" defaultValue={""} onChange={e => setNickname(e.target.value)}/>
                   </div>
                   <div>
                   <FormControlLabel
