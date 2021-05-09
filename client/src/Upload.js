@@ -23,6 +23,8 @@ import FormHelperText from '@material-ui/core/FormHelperText';
 import FormControl from '@material-ui/core/FormControl';
 import Select from '@material-ui/core/Select';
 import Snackbar from '@material-ui/core/Snackbar';
+
+import {SERVER} from  "./config"
 // import MuiAlert from '@material-ui/lab/Alert';
 
 // function Alert(props) {
@@ -159,7 +161,7 @@ export function VerticalLinearStepper(props) {
         }
 
         console.log(body)
-        const response = await fetch( "http://localhost:5000/plants", {
+        const response = await fetch(`http://${SERVER}/plants`, {
             method: "POST",
             headers: {"Content-Type": "application/json"},
             body: JSON.stringify(body)

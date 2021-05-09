@@ -20,6 +20,7 @@ import AddIcon from '@material-ui/icons/Add';
 import DeleteIcon from '@material-ui/icons/Delete';
 import AddPost from './AddPost';
 import EcoIcon from '@material-ui/icons/Eco';
+import {SERVER} from  "./config"
 
 function Copyright() {
   return (
@@ -87,7 +88,7 @@ export default function Album(props) {
 
     // e.preventDefault();
     try {
-      const response = await fetch("http://localhost:5000/plants/search")
+      const response = await fetch(`http://${SERVER}/plants/search`)
       const jsonData = await response.json()
 
       console.log(jsonData)
@@ -101,7 +102,7 @@ export default function Album(props) {
     console.log("deleting", plant_id)
     // e.preventDefault();
     try {
-      const response = await fetch(`http://localhost:5000/plants/${plant_id}`,{
+      const response = await fetch(`http://${SERVER}/plants/${plant_id}`,{
         method: "DELETE",
         headers: {"Content-Type": "application/json"},
       })

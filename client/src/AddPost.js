@@ -24,7 +24,7 @@ import FormControl from '@material-ui/core/FormControl';
 import Select from '@material-ui/core/Select';
 import AddIcon from '@material-ui/icons/Add';
 import Snackbar from '@material-ui/core/Snackbar';
-
+import {SERVER} from  "./config"
 
 import {storage, firebase} from './App'
 
@@ -148,7 +148,7 @@ export function Steps(props) {
         }
 
         console.log(body)
-        const response = await fetch( "http://localhost:5000/posts", {
+        const response = await fetch( `http://${SERVER}/posts`, {
             method: "POST",
             headers: {"Content-Type": "application/json"},
             body: JSON.stringify(body)

@@ -1,21 +1,23 @@
+require('dotenv').config()
 const makeApp = require('./app.js');
 const makeDatabase = require('./db/db.js');
 
 const Pool = require("pg").Pool;
 
+
 const pool = new Pool({
-    user: "postgres",
-    password: "password2001",
-    host: "localhost",
-    port: 5432,
-    database: "plantDB"
+    user: process.env.DB_USER,
+    password: process.env.DB_PASSWORD,
+    host: process.env.DB_HOST,
+    port: process.env.DB_PORT,
+    database: process.env.DB_PROD
 });
 
 const db = new makeDatabase(pool)
 const app = makeApp(db)
 
-app.listen(5000, ()=> {
-    console.log("listening on 5000")
+app.listen(process.env.PORT, ()=> {
+    console.log("listening on port", process.env.PORT)
 });
 
 exports.module = db;

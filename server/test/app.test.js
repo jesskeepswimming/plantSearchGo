@@ -12,11 +12,11 @@ describe('tesing endpoints', () => {
     beforeAll(async () => {
 
         pool = new Pool({
-            user: "postgres",
-            password: "password2001",
-            host: "localhost",
-            port: 5432,
-            database: "testdb"
+            user: process.env.DB_USER,
+            password: process.env.DB_PASSWORD,
+            host: process.env.DB_HOST,
+            port: process.env.DB_PORT,
+            database: rocess.env.DB_TEST
         });
 
         db = new makeDatabase(pool)

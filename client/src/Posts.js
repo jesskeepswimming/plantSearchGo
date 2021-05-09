@@ -14,6 +14,7 @@ import GridListTile from '@material-ui/core/GridListTile';
 import GridListTileBar from '@material-ui/core/GridListTileBar';
 import ListSubheader from '@material-ui/core/ListSubheader';
 import FavoriteIcon from '@material-ui/icons/Favorite';
+import {SERVER} from  "./config"
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -121,7 +122,7 @@ export default function PostDialog(props) {
 
         // e.preventDefault();
         try {
-        const response = await fetch(`http://localhost:5000/posts/${plant_id}`)
+        const response = await fetch(`http://${SERVER}/posts/${plant_id}`)
         const jsonData = await response.json()
 
         console.log(jsonData)
