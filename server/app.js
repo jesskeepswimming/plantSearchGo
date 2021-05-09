@@ -2,17 +2,16 @@
 const express = require("express");
 
 const cors = require("cors");
-const db = require("./db");
+// const db = require("./db");
 const validation = require("./validation"); 
 
-function App(database) {
+function App(db) {
     const app = express();
     app.use(cors());
     app.use(express.json());
 
 
     // ROUTES //
-
 
     function parseNewProfile(body) {
         return [body.user_id, body.plant, body.for_sale, body.image, body.variety]
