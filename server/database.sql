@@ -2,7 +2,6 @@ CREATE DATABASE plantDB;
 
 CREATE TYPE plant_stage AS ENUM ('Seed', 'Seedling', 'Fruiting','Flowering',  'Mature');
 
-
 CREATE TABLE plant_profiles(
     plant_id SERIAL PRIMARY KEY,
     last_updated TIMESTAMP default CURRENT_TIMESTAMP NOT NULL,

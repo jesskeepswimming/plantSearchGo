@@ -17,3 +17,5 @@ const app = makeApp(db)
 app.listen(5000, ()=> {
     console.log("listening on 5000")
 });
+
+exports.module = db;

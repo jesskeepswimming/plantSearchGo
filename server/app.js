@@ -13,16 +13,6 @@ function App(db) {
 
     // ROUTES //
 
-    function parseNewProfile(body) {
-        return [body.user_id, body.plant, body.for_sale, body.image, body.variety]
-    }
-
-    function parseNewPost(body, plant_id) {
-        return [plant_id, body.stage, body.caption, body.image]
-    }
-
-    // verifyimage
-   
     // create a plant profile + upload a post to the profile
     app.post("/plants", async(req, res)=> {
 
@@ -31,10 +21,10 @@ function App(db) {
 
             // verify image 
 
-            const [user_id, plant, for_sale, cover_image, variety] = parseNewProfile(body);
+            const [user_id, plant, for_sale, cover_image, variety] = validation.parseNewProfile(body);
             const new_plant_id = await db.newProfile(user_id, plant, for_sale, cover_image, variety)
 
-            const [plant_id, stage, caption, image] = parseNewPost(body, new_plant_id);
+            const [plant_id, stage, caption, image] = validation.parseNewPost(body, new_plant_id);
             const {post_id, date_posted} = await db.newPost(plant_id, stage, caption, image)
 
             res.json({plant_id, post_id, date_posted})
@@ -56,7 +46,7 @@ function App(db) {
                 return
             }
 
-            const [plant_id, stage, caption, image] = parseNewPost(body, body.plant_id);
+            const [plant_id, stage, caption, image] = validation.parseNewPost(body, body.plant_id);
             const {post_id, date_posted} = await db.newPost(plant_id, stage, caption, image)
 
             await db.updateProfile(image, date_posted, plant_id)        
@@ -73,23 +63,6 @@ function App(db) {
         try { 
             const allProfiles = await db.getAllProfiles()
             res.json(allProfiles)
-
-        } catch (err) {
-            res.status(500).send({error: err.message})
-        }
-    })
-
-
-    // TODO: implement search on front end
-    // search for a plant profile with a plant type ex. Tomato
-    app.get("/plants/search/:plant", async(req, res)=> {
-        try { 
-            const params = req.params;
-            const plant = params.plant;
-
-            let results =  await db.searchProfiles(plant)
-
-            res.json(results)
 
         } catch (err) {
             res.status(500).send({error: err.message})

@@ -49,16 +49,6 @@ class DB{
         return allProfiles.rows
     }
 
-    async searchProfiles(plant){
-        const allProfiles = await this.pool.query(`
-            SELECT * FROM plant_profiles 
-            WHERE plant = $1`,
-            [plant]
-        )
-
-        return allProfiles.rows
-    }
-
     async getProfilePosts(plant_id){
         const posts = await this.pool.query(`
             SELECT * FROM plant_posts 
