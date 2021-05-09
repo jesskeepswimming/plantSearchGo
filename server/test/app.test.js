@@ -1,8 +1,8 @@
 const request = require("supertest")
-const makeDatabase = require('../db.js');
+const makeDatabase = require('../db/db.js');
 const sample = require('./sample')
 const Pool = require("pg").Pool;
-const createDB = require('../createDB')
+const createDB = require('../db/createDB')
 
 describe('tesing endpoints', () => {
 

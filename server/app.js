@@ -19,8 +19,6 @@ function App(db) {
         try { 
             const body =  req.body;
 
-            // verify image 
-
             const [user_id, plant, for_sale, cover_image, variety] = validation.parseNewProfile(body);
             const new_plant_id = await db.newProfile(user_id, plant, for_sale, cover_image, variety)
 

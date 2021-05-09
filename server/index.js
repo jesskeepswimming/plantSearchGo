@@ -1,5 +1,5 @@
 const makeApp = require('./app.js');
-const makeDatabase = require('./db.js');
+const makeDatabase = require('./db/db.js');
 
 const Pool = require("pg").Pool;
 
