@@ -5,7 +5,7 @@ Visit the live site at https://plant-sta-client.herokuapp.com/
 
 API documentation: https://documenter.getpostman.com/view/11692926/TzRSfSTH
 
-To run tests: 
+To run tests locally: 
 
 1. log in + make a test database in postgreSQL
 2. cd server
