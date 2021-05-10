@@ -3,7 +3,7 @@ Fall 2021 Shopify Developer Challenge
 
 Visit the live site at https://plant-sta-client.herokuapp.com/
 
-Server documentation: https://documenter.getpostman.com/view/11692926/TzRSfSTH
+API documentation: https://documenter.getpostman.com/view/11692926/TzRSfSTH
 
 To run tests: 
 
