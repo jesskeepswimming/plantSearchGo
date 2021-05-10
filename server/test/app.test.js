@@ -16,7 +16,7 @@ describe('tesing endpoints', () => {
             password: process.env.DB_PASSWORD,
             host: process.env.DB_HOST,
             port: process.env.DB_PORT,
-            database: rocess.env.DB_TEST
+            database: process.env.DB_TEST
         });
 
         db = new makeDatabase(pool)
