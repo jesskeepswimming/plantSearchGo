@@ -26,3 +26,5 @@ DB_TEST="your test database"
 - Front end tests
 - Search by plant
 - User profiles
+
+Created using Node/Express, React, PostgresSQL, and Firebase Auth. 
