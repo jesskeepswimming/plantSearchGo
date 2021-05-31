@@ -1,32 +1,32 @@
-exports.stage_types = `DROP TYPE IF EXISTS plant_stage CASCADE;
-    CREATE TYPE plant_stage AS ENUM (
-    'Seed', 'Seedling', 'Fruiting','Flowering',  'Mature'
-)`
+exports.users = `DROP TABLE IF EXISTS users CASCADE;
+CREATE TABLE users(
+    email VARCHAR(255) PRIMARY KEY,
+    username VARCHAR(255) NOT NULL UNIQUE
+);`
 
+exports.pins = `DROP TABLE IF EXISTS pins CASCADE;
+CREATE TABLE pins(
+    pin_id SERIAL PRIMARY KEY,
+    string_address VARCHAR(255),
+    latitude DOUBLE PRECISION NOT NULL,
+    longitude DOUBLE PRECISION NOT NULL,
+    geolocation geography(point)
+)`        
 
-exports.plant_profiles = `DROP TABLE IF EXISTS plant_profiles CASCADE;
-CREATE TABLE plant_profiles(
+exports.plants = `DROP TABLE IF EXISTS plants CASCADE;
+CREATE TABLE plants(
     plant_id SERIAL PRIMARY KEY,
-    last_updated TIMESTAMP default CURRENT_TIMESTAMP NOT NULL,
-    user_id VARCHAR(255) NOT NULL,
-    plant VARCHAR(255) NOT NULL,
-    for_sale BOOLEAN, 
-    variety VARCHAR(255),
-    image VARCHAR(255) NOT NULL
-)`
-
-exports.plant_posts = `DROP TABLE IF EXISTS plant_posts CASCADE;
-CREATE TABLE plant_posts(
-    post_id SERIAL PRIMARY KEY,
     date_posted TIMESTAMP default CURRENT_TIMESTAMP NOT NULL,
-    plant_id INTEGER NOT NULL,
-    stage plant_stage,
-    caption VARCHAR(255),
+    plant_name VARCHAR(255) NOT NULL,
+    plant_scientific_name VARCHAR(255),
+    plant_details VARCHAR(255),
+    pin_id INTEGER NOT NULL REFERENCES pins(pin_id),
+    user_id VARCHAR(255) NOT NULL REFERENCES users(email),
     image VARCHAR(255) NOT NULL
 )`        
 
-exports.TD_stage_types = `DROP TYPE IF EXISTS plant_stage CASCADE`
-exports.TD_plant_profiles = `DROP TABLE IF EXISTS plant_profiles CASCADE`
-exports.TD_plant_posts = `DROP TABLE IF EXISTS plant_posts CASCADE`        
+exports.TD_plants = `DROP TABLE IF EXISTS plants CASCADE`
+exports.TD_pins = `DROP TABLE IF EXISTS pins CASCADE`
+exports.TD_users = `DROP TABLE IF EXISTS users CASCADE`        
 
 
