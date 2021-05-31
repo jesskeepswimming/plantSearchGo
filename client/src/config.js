@@ -8,4 +8,3 @@ export const firebaseConfig = {
   };
 
 export const SERVER = 'localhost:5000';
-export const mapsApiKey = 'AIzaSyBNit4oxOht52q1-WrAE8vmsireBRrF370'
