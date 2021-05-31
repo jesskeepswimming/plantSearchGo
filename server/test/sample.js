@@ -59,7 +59,7 @@ exports.newPlant = {
     },
     "user": "jessicalui@uwblueprint.org",
     "image": "https://firebasestorage.googleapis.com/v0/b/plants-2a2d0.appspot.com/o/images%2F1620620896201venus-flytrap.jpg?alt=media&token=17dd43f8-836a-4795-a8ca-9ff99036e0d8",
-    "pin_id": 3
+    "pin_id": 2
 }
 
 // app.get("/pins/0/vicinity/3000")
