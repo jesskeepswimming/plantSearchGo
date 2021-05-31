@@ -26,10 +26,10 @@ const paintLayer = {
 
 const getStations = () =>{
   return {
-    "a": {
+    "pin_id_a": {
       "position": [-80.544861, 43.472286]
     },
-    "b": {
+    "pin_id_b": {
       "position": [43.472286, -80.544861]
     },
   }
@@ -38,6 +38,7 @@ const getStations = () =>{
 
 function ThreeDMap(props) {
 
+  const {onPinClick} = props
   const [fitBounds, setFitBounds] = useState(undefined);
   const [center, setCenter] = useState([-80.544861, 43.472286]);
   const [zoom, setZoom] = useState([50]);
@@ -75,9 +76,11 @@ function ThreeDMap(props) {
       >
           <Layer type='circle'  paint={{'circle-color': 'red', 'circle-radius': 10}}>
               {stations ? Object.keys(stations).map((k, index)=> {
-                  console.log(k, stations[k].position)
                   return <Feature
                     key = {k}
+                    // onMouseEnter={onToggleHover.bind('pointer')}
+                    // onMouseLeave={onToggleHover.bind( '')}
+                    onClick={() => onPinClick(k)}
                     coordinates = {stations[k].position}
                   />
             }): ''}

@@ -22,6 +22,7 @@ import AddPost from './AddPost';
 import EcoIcon from '@material-ui/icons/Eco';
 import {SERVER} from  "./config"
 import ThreeDMap from './MyMap';
+import PinPlants from './PinPlants'
 
 function Copyright() {
   return (
@@ -74,6 +75,8 @@ export default function Album(props) {
   const [cards, setCards] = useState([])
   const [user, setUser] = useState(firebase.auth().currentUser)
   const [reload, setReload] = useState(0)
+  const [isOpen, setIsOpen] = useState(false)
+  const [pinId, setPinId] = useState(undefined)
 
   useEffect(() => {
     // Update the document title using the browser API
@@ -97,6 +100,19 @@ export default function Album(props) {
     // } catch (err) {
     //   console.log(err.message)
     // }
+  }
+
+  const onPinClick = (pin_id) => {
+    console.log(pin_id)
+    setPinId(pin_id)  
+    setIsOpen(true)
+      
+  }
+
+  const handleClose = () => {
+    console.log("close")
+    setPinId(undefined)
+    setIsOpen(false)
   }
 
 
@@ -198,7 +214,8 @@ export default function Album(props) {
             </div>
           </Container>
         </div>
-        <ThreeDMap/>
+        <ThreeDMap onPinClick={onPinClick}/>
+        <PinPlants isOpen={isOpen} pin_id={pinId} handleClose={handleClose}/>
 
         <Container className={classes.cardGrid} maxWidth="md">
           {/* End hero unit */}
