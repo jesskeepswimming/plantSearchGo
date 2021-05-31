@@ -1,17 +1,8 @@
 
 import React, { useState, useEffect } from "react";
 import ReactMapboxGl, {Layer, Feature, GeoJSONLayer} from "react-mapbox-gl";
-import svg from './logo.svg'
-// tslint:disable-next-line:no-var-requires
-const { token, styles } = require('./config.json');
-const geojson = {
-  type: "FeatureCollection",
-  features: [
-    {type: "Feature", geometry: {type: "Point", coordinates: [-80.544861, 43.472286]}},
-    {type: "Feature", geometry: {type: "Point", coordinates: [-80.538930, 43.462650]}}
-  ]
-}
 
+const { token } = require('./config.json');
 
 const Map = ReactMapboxGl({ accessToken: token });
 
@@ -33,35 +24,6 @@ const paintLayer = {
   'fill-extrusion-opacity': 0.6
 };
 
-// export interface Props {
-//   // tslint:disable-next-line:no-any
-//   onStyleLoad?: (map: any) => any;
-// }
-
-
-
-
-// Create an image for the Layer
-const image = new Image();
-// image.src = 'data:image/svg+xml;charset=utf-8;base64,'+btoa(svg)
-image.src = 'https://image.flaticon.com/icons/png/512/149/149059.png'
-const images = ['pin', image]
-
-
-const symbolLayout = {
-  'text-field': '{place}',
-  'text-font': ['Open Sans Semibold', 'Arial Unicode MS Bold'],
-  'text-offset': [0, 0.6],
-  'text-anchor': 'top'
-};
-const symbolPaint = {
-  'text-color': 'white'
-};
-
-const circleLayout = { visibility: 'visible'}
-const circlePaint = {
-  'circle-color': 'white'
-}
 const getStations = () =>{
   return {
     "a": {
@@ -83,7 +45,6 @@ function ThreeDMap(props) {
   const [pitch, setPitch] = useState([80]);
   const [station, setStation] = useState(undefined);
   const [stations, setStations] = useState({});
-
   
   // Define layout to use in Layer component
   const layoutLayer = { 'icon-image': 'pin' };
@@ -91,14 +52,13 @@ function ThreeDMap(props) {
     useEffect(()=> {
 
         
+    }, [stations]);
+
+    const onStyleLoad = (map, loadEvent) => {
+
         var k = getStations();
         setStations(k)
 
-    }, []);
-
-    const onStyleLoad = (map, loadEvent) => {
-        console.log(map);
-        // return props.onStyleLoad && props.onStyleLoad(map);
     };
 
 
@@ -113,24 +73,17 @@ function ThreeDMap(props) {
         bearing={bearing}
         renderChildrenInPortal={true}
       >
-          <Layer type='circle' layout={{'visibility': 'visible'}} paint={{'circle-color':'black' , 'circle-radius':100}}>
-              {Object.keys(stations).map((k, index)=> (
-                  <Feature
-                  id = {k}
+          <Layer type='circle'  paint={{'circle-color': 'red', 'circle-radius': 10}}>
+              {stations ? Object.keys(stations).map((k, index)=> {
+                  console.log(k, stations[k].position)
+                  return <Feature
                     key = {k}
                     coordinates = {stations[k].position}
                   />
-              ))}
+            }): ''}
           </Layer>
-        {/* <GeoJSONLayer
-          id='geojson'
-          data = {geojson}
-          circleLayout={circleLayout}
-          circlePaint={circlePaint}
-          circleOnClick={()=> console.log('click')}
-          symbolLayout={symbolLayout}
-          symbolPaint={symbolPaint}
-        /> */}
+
+      
         <Layer
           id="3d-buildings"
           sourceId="composite"
@@ -141,7 +94,7 @@ function ThreeDMap(props) {
           paint={paintLayer}
         >
           
-          </Layer>
+        </Layer>
         
        
       

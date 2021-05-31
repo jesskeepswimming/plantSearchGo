@@ -88,15 +88,15 @@ export default function Album(props) {
   const onFetchData = async e => {
 
     // e.preventDefault();
-    try {
-      const response = await fetch(`http://${SERVER}/plants/search`)
-      const jsonData = await response.json()
+    // try {
+    //   const response = await fetch(`http://${SERVER}/plants/search`)
+    //   const jsonData = await response.json()
 
-      console.log(jsonData)
-      setCards(jsonData)
-    } catch (err) {
-      console.log(err.message)
-    }
+    //   console.log(jsonData)
+    //   setCards(jsonData)
+    // } catch (err) {
+    //   console.log(err.message)
+    // }
   }
 
 
