@@ -34,8 +34,7 @@ const useStyles = makeStyles((theme) => ({
   }));
   
   export function TitlebarGridList(props) {
-    const itemData = props.itemData
-    const {image, variety, plant, plant_id, user_id, for_sale} = props.plant
+    const {itemData} = props
 
     const classes = useStyles();
   
@@ -43,7 +42,7 @@ const useStyles = makeStyles((theme) => ({
       <div className={classes.root}>
         <GridList cellHeight={300} className={classes.gridList} cols = {1}>
           <GridListTile key="Subheader" cols={1} style={{ height: 'auto' }}>
-        <ListSubheader component="div">{variety} by {user_id}</ListSubheader>
+        <ListSubheader component="div">{"a"} by {"b"}</ListSubheader>
           </GridListTile>
           {itemData.map((tile) => (
             <GridListTile key={tile.post_id}>
@@ -118,13 +117,13 @@ export default function PinPlants(props) {
     const [ itemData, setItemData ] = React.useState([]);
 
     
-    const onFetchData = async e => {
+    const onFetchData = async (pin_id) => {
 
         // e.preventDefault();
         try {
         // const response = await fetch(`http://${SERVER}/posts/${plant_id}`)
             // const jsonData = await response.json()
-            const jsonData = {"a":1}
+            const jsonData = []
             console.log(jsonData)
             setItemData(jsonData)
         } catch (err) {
@@ -134,6 +133,7 @@ export default function PinPlants(props) {
 
     useEffect(()=> {
         if (isOpen){
+            onFetchData(pin_id)
             setOpen(true)
         } 
     }, [isOpen, pin_id])
@@ -147,6 +147,7 @@ export default function PinPlants(props) {
 
     const handleExit = () => {
       setOpen(false);
+      setItemData([])
       handleClose()
       
     };
@@ -158,7 +159,7 @@ export default function PinPlants(props) {
             {pin_id}
           </DialogTitle>
           <DialogContent dividers>
-          {/* <TitlebarGridList itemData={itemData} plant ={props}/> */}
+          {itemData.length > 0? <TitlebarGridList itemData={itemData}/> : ''}
                 
           </DialogContent>
           <DialogActions>

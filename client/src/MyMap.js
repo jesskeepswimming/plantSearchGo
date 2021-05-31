@@ -78,8 +78,7 @@ function ThreeDMap(props) {
               {stations ? Object.keys(stations).map((k, index)=> {
                   return <Feature
                     key = {k}
-                    // onMouseEnter={onToggleHover.bind('pointer')}
-                    // onMouseLeave={onToggleHover.bind( '')}
+    
                     onClick={() => onPinClick(k)}
                     coordinates = {stations[k].position}
                   />
