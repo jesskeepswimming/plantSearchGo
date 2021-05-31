@@ -5,84 +5,141 @@ class DB{
         this.pool = pool;
     }
 
-    async newProfile(user_id, plant, for_sale, image, variety){
-        const newProfile = await this.pool.query(
-            `INSERT INTO plant_profiles (user_id, plant, for_sale, image, variety) 
-            VALUES($1, $2, $3, $4, $5) 
-            RETURNING plant_id`, 
-            [user_id, plant, for_sale, image, variety]
-        )
-
-        const plant_id = newProfile.rows[0].plant_id
-
-        return plant_id
-    }
-
-    async newPost(plant_id, stage, caption, image){
-        const newPost = await this.pool.query(
-            `INSERT INTO plant_posts (plant_id, stage, caption, image) 
-            VALUES($1, $2, $3, $4) 
-            RETURNING post_id, date_posted`,
-            [plant_id, stage, caption, image]
-        )
-
-        return newPost.rows[0]
-    }
-
-    async updateProfile(image, date_posted, plant_id){
+    async newUser(email, username){
         await this.pool.query(
-            `UPDATE plant_profiles 
-            SET image = $1, last_updated = $2 
-            WHERE plant_id = $3`, 
-            [image, date_posted, plant_id]
+            `INSERT INTO users (email, username) 
+            VALUES($1, $2)`, 
+            [email, username]
         )
 
-        return 
+        return true
     }
 
-    async getAllProfiles(){
-        const allProfiles = await this.pool.query(`
-            SELECT * FROM plant_profiles 
-            ORDER BY last_updated DESC`
+    async checkUsername(username){
+        const emails = await this.pool.query(`
+            SELECT email FROM users 
+            WHERE username = $1`,
+            [username]
+        );
+
+        return emails.rows
+    }
+
+    async getUsername(email){
+        const username = await this.pool.query(`
+            SELECT username FROM users 
+            WHERE email = $1`,
+            [email]
+        );
+
+        return username.rows[0]
+    }
+
+    async newPin(address, latitude, longitude){
+        const newPin = await this.pool.query(
+            `INSERT INTO pins (string_address, latitude, longitude) 
+            VALUES($1, $2, $3) 
+            RETURNING pin_id`,
+            [address, latitude, longitude]
         )
 
-        return allProfiles.rows
+        const pin_id = newPin.rows[0].pin_id
+        console.log(pin_id)
+
+        await this.pool.query(
+            `UPDATE pins 
+            SET geolocation = ST_MakePoint($1, $2)
+            WHERE pin_id = $3`,
+            [longitude, latitude, pin_id]
+        )
+
+        return pin_id
     }
 
-    async getProfilePosts(plant_id){
-        const posts = await this.pool.query(`
-            SELECT * FROM plant_posts 
-            WHERE plant_id = $1 
+    async newPlant(plant_name, common_name, notes, user, image, pin_id){
+        const newPlant = await this.pool.query(
+            `INSERT INTO plants (plant_name, plant_scientific_name, plant_details, user_id, image, pin_id) 
+            VALUES($1, $2, $3, $4, $5, $6) 
+            RETURNING plant_id, date_posted`,
+            [common_name, plant_name, notes, user, image, pin_id]
+        )
+
+        return newPlant.rows[0]
+    }
+
+
+    async getPinsByRadius(pin_id, radius){
+        const points = await this.pool.query(`
+            SELECT geolocation FROM pins 
+            WHERE pin_id = $1`, 
+            [pin_id]
+        )
+
+        const point = points.rows[0].geolocation
+
+        const pins = await this.pool.query(`
+            SELECT * FROM pins 
+            WHERE ST_DWithin(geolocation, $1, $2)`, 
+            [point, radius]
+        )
+
+        return pins.rows
+    }
+
+    async getPlantsForPin(pin_id){
+        const plants = await this.pool.query(`
+            SELECT * FROM plants 
+            WHERE pin_id = $1 
             ORDER BY date_posted DESC`, 
-            [plant_id]
+            [pin_id]
         )
 
-        return posts.rows
+        return plants.rows
     }
 
-    async deleteProfile(plant_id) {
+    async getPlantsForUser(user) {
+        
+        const plants = await this.pool.query(`
+            SELECT * FROM plants 
+            WHERE user_id = $1 
+            ORDER BY date_posted DESC`, 
+            [user]
+        )
+
+        return plants.rows
+    
+    }
+
+    async deletePlant(plant_id) {
+        const pins = await this.pool.query(`
+            SELECT pin_id FROM plants 
+            WHERE plant_id = $1`,
+            [plant_id]
+        );
+        console.log(pins.rows[0].pin_id)
+
+
+        const pin_id = pins.rows[0].pin_id
         await this.pool.query(`
-            DELETE FROM plant_profiles 
+            DELETE FROM plants 
             WHERE plant_id = $1`,
             [plant_id]
         );
 
-        await this.pool.query(`
-            DELETE FROM plant_posts 
-            WHERE plant_id = $1`, 
-            [plant_id]
-        );
+        const plants = await this.getPlantsForPin(pin_id)
+        console.log(plants)
+        if (plants.length == 0) {
+            await this.pool.query(`
+                DELETE FROM pins 
+                WHERE pin_id = $1`, 
+                [pin_id]
+            );
+        }
 
+        return true
+        
     }
 
 }
 
 module.exports = DB;
-// exports.pool = pool;
-// exports.newProfile = newProfile;
-// exports.newPost = newPost;
-// exports.updateProfile = updateProfile;
-// exports.getAllProfiles = getAllProfiles;
-// exports.searchProfiles = searchProfiles;
-// exports.getProfilePosts = getProfilePosts;
-// exports.deleteProfile = deleteProfile;
