@@ -21,6 +21,7 @@ import DeleteIcon from '@material-ui/icons/Delete';
 import AddPost from './AddPost';
 import EcoIcon from '@material-ui/icons/Eco';
 import {SERVER} from  "./config"
+import ThreeDMap from './MyMap';
 
 function Copyright() {
   return (
@@ -98,6 +99,8 @@ export default function Album(props) {
     }
   }
 
+
+
   async function onDeleteData(plant_id) {
     console.log("deleting", plant_id)
     // e.preventDefault();
@@ -131,11 +134,10 @@ export default function Album(props) {
         <div className={classes.heroContent}>
           <Container maxWidth="sm">
             <Typography component="h1" variant="h3" align="center" color="textPrimary" gutterBottom>
-              Welcome to Plantsta!
+              PlantSearchGo!
             </Typography>
             <Typography variant="h6" align="center" color="textSecondary" paragraph>
-              Document the lifecycle of your plants from seed to maturity! Explore other plant journeys by clicking "view" on a plant profile. Optionally list your plant for sale and connect with other sellers for plant trades. 
-              Upload a plant profile anonymously, or connect with Google to add updates to your plant journeys and enable buyers to connect with you.   
+              Document and collect nearby plants!
             </Typography>
             <div className={classes.heroButtons}>
               <Grid container spacing={2} justify="center">
@@ -196,9 +198,12 @@ export default function Album(props) {
             </div>
           </Container>
         </div>
+        <ThreeDMap/>
+
         <Container className={classes.cardGrid} maxWidth="md">
           {/* End hero unit */}
-          <Grid container spacing={4}>
+
+          {/* <Grid container spacing={4}>
             {cards.map((card) => (
               <Grid item key={card.plant_id} xs={12} sm={6} md={4}>
                 <Badge badgeContent={card.for_sale ? "selling": ""} color="secondary" invisible={card.for_sale ? false:true}>
@@ -233,7 +238,7 @@ export default function Album(props) {
                   </Badge>
               </Grid>
             ))}
-          </Grid>
+          </Grid> */}
         </Container>
       </main>
       {/* Footer */}
