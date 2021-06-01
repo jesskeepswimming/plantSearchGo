@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect } from "react";
-import ReactMapboxGl, {Layer, Feature, GeoJSONLayer} from "react-mapbox-gl";
+import ReactMapboxGl, {Layer, Feature} from "react-mapbox-gl";
 import {SERVER} from  "./config"
 
 const { token } = require('./config.json');
