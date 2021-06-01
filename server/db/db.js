@@ -6,13 +6,25 @@ class DB{
     }
 
     async newUser(email, username){
-        await this.pool.query(
-            `INSERT INTO users (email, username) 
-            VALUES($1, $2)`, 
-            [email, username]
-        )
+        const results = await this.pool.query(`
+            SELECT * FROM users 
+            WHERE email = $1`,
+            [email]
+        );
 
-        return true
+        if (results.rows.length > 0) {
+            // account already exists
+            return true;
+        } else {
+            await this.pool.query(
+                `INSERT INTO users (email, username) 
+                VALUES($1, $2)`, 
+                [email, username]
+            )
+
+            return false
+        }
+
     }
 
     async checkUsername(username){
@@ -68,19 +80,12 @@ class DB{
     }
 
 
-    async getPinsByRadius(pin_id, radius){
-        const points = await this.pool.query(`
-            SELECT geolocation FROM pins 
-            WHERE pin_id = $1`, 
-            [pin_id]
-        )
-
-        const point = points.rows[0].geolocation
+    async getPinsByRadius(longitude, latitude, radius){
 
         const pins = await this.pool.query(`
             SELECT * FROM pins 
-            WHERE ST_DWithin(geolocation, $1, $2)`, 
-            [point, radius]
+            WHERE ST_DWithin(geolocation, ST_MakePoint($1, $2), $3)`, 
+            [longitude, latitude, radius]
         )
 
         return pins.rows
