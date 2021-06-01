@@ -31,12 +31,12 @@ function App(db) {
             const [email, username] = parser.parseNewUser(body);
 
             // check if username is already taken
-            const emails = await db.checkUsername(username)
+            // const emails = await db.checkUsername(username)
 
-            if (emails.length > 0) {
-                res.status(400).send({error: "Username is already taken."})
-                return
-            }
+            // if (emails.length > 0) {
+            //     res.status(400).send({error: "Username is already taken."})
+            //     return
+            // }
 
             const exists = await db.newUser(email, username)
 
