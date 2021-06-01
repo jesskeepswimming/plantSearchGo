@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { withStyles, makeStyles } from '@material-ui/core/styles';
 import Button from '@material-ui/core/Button';
 import Dialog from '@material-ui/core/Dialog';
@@ -12,9 +12,7 @@ import Typography from '@material-ui/core/Typography';
 import GridList from '@material-ui/core/GridList';
 import GridListTile from '@material-ui/core/GridListTile';
 import GridListTileBar from '@material-ui/core/GridListTileBar';
-import ListSubheader from '@material-ui/core/ListSubheader';
 import FavoriteIcon from '@material-ui/icons/Favorite';
-import {SERVER} from  "./config"
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -34,8 +32,7 @@ const useStyles = makeStyles((theme) => ({
   }));
   
   export function TitlebarGridList(props) {
-    const itemData = props.itemData
-    const {image, variety, plant, plant_id, user_id, for_sale} = props.plant
+    const {itemData} = props
 
     const classes = useStyles();
   
@@ -43,15 +40,14 @@ const useStyles = makeStyles((theme) => ({
       <div className={classes.root}>
         <GridList cellHeight={300} className={classes.gridList} cols = {1}>
           <GridListTile key="Subheader" cols={1} style={{ height: 'auto' }}>
-        <ListSubheader component="div">{variety} by {user_id}</ListSubheader>
           </GridListTile>
           {itemData.map((tile) => (
-            <GridListTile key={tile.post_id}>
-              <img src={tile.image} alt={tile.caption} />
+            <GridListTile key={tile.plant_id}>
+              <img src={tile.image} alt={tile.plant_details} />
               <GridListTileBar
-                title={tile.stage}
-                //{<Typography variant="subtitle1">{tile.stage}</Typography>}
-                subtitle = {tile.caption + " - " + tile.date_posted}
+                title={tile.plant_name + ', ' + tile.plant_scientific_name}
+                // <Typography> variant="subtitle1">{tile.scientific_name}</Typography>
+                subtitle = {tile.date_posted + "," + tile.user_id}
                 // {
                 //     <div>
                 //         <Typography variant="caption" >{tile.caption}</Typography>
@@ -59,7 +55,7 @@ const useStyles = makeStyles((theme) => ({
                 //     </div>
                 // }
                 actionIcon={
-                  <IconButton aria-label={`info about ${tile.caption}`} className={classes.icon}>
+                  <IconButton aria-label={`info about ${tile.plant_id}`} className={classes.icon}>
                     <FavoriteIcon />
                   </IconButton>
                 }
@@ -111,55 +107,63 @@ const styles = (theme) => ({
     },
   }))(MuiDialogActions);
   
-export default function PostDialog(props) {
+export default function PinPlants(props) {
     // const card = props.card
-    const {image, variety, plant, plant_id, user_id, for_sale} = props.card
+    const {isOpen, pin_id, handleClose, pinPlants} = props
     const [open, setOpen] = React.useState(false);
     const [ itemData, setItemData ] = React.useState([]);
 
     
-    const onFetchData = async e => {
+    // const onFetchData = async (pin_id) => {
 
-        // e.preventDefault();
-        try {
-        const response = await fetch(`http://${SERVER}/posts/${plant_id}`)
-        const jsonData = await response.json()
+    //     // e.preventDefault();
+    //     try {
+    //     // const response = await fetch(`http://${SERVER}/posts/${plant_id}`)
+    //         // const jsonData = await response.json()
+    //         const jsonData = []
+    //         console.log(jsonData)
+    //         setItemData(jsonData)
+    //     } catch (err) {
+    //         console.log(err.message)
+    //     }
+    // }
 
-        console.log(jsonData)
-        setItemData(jsonData)
-        } catch (err) {
-        console.log(err.message)
-        }
-    }
-  
-    const handleClickOpen = () => {
-        onFetchData()
-        console.log(image, variety, plant, plant_id, user_id, for_sale)
-        setOpen(true);
-    };
-    const handleClose = () => {
+    useEffect(()=> {
+        if (isOpen){
+            setOpen(true)
+        } 
+    }, [isOpen])
+
+    // const handleClickOpen = () => {
+    //     onFetchData()
+    //     console.log(image, variety, plant, plant_id, user_id, for_sale)
+    //     setOpen(true);
+    // };
+
+
+    const handleExit = () => {
       setOpen(false);
+      setItemData([])
+      handleClose()
+      
     };
   
     return (
       <div>
-        <Button color="primary" onClick={handleClickOpen}>
-          View
-        </Button>
-        <Dialog onClose={handleClose} aria-labelledby="customized-dialog-title" open={open}>
-          <DialogTitle id="customized-dialog-title" onClose={handleClose}>
-            {plant}
+        <Dialog onClose={handleExit} aria-labelledby="customized-dialog-title" open={open}>
+          <DialogTitle id="customized-dialog-title" onClose={handleExit}>
+            {pin_id}
           </DialogTitle>
           <DialogContent dividers>
-          <TitlebarGridList itemData={itemData} plant ={props.card}/>
+          {pinPlants ? <TitlebarGridList itemData={pinPlants}/> : ''}
                 
           </DialogContent>
           <DialogActions>
-            {props.card.for_sale ? <Button> Message Seller</Button> : ""}
+            <Button
+                onClick={()=> console.log('add plant to this pin')} // to do
+            > Add photo</Button>
           </DialogActions>
         </Dialog>
       </div>
     );
   }
-  
-  

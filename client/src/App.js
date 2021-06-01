@@ -13,12 +13,17 @@ var storage = firebase.storage();
 export {storage, firebase}
 
 function App() {
+  const onStyleLoad = (ev) => {
+    console.log(ev)
+  }
+
   return (
     <div className="App">
       <header>
 
       </header>
       <Album provider={provider}/>
+      
     </div>
   );
 }
