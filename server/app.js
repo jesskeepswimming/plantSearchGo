@@ -38,9 +38,13 @@ function App(db) {
                 return
             }
 
-            await db.newUser(email, username)
+            const exists = await db.newUser(email, username)
 
-            res.json("Profile successfully created")
+            if (exists) {
+                res.json("Profile already exists.")
+            } else {
+                res.json("Profile successfully created.")
+            }
 
         } catch (err) {
             res.status(500).send({error: err.message})

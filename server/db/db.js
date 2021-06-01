@@ -6,13 +6,25 @@ class DB{
     }
 
     async newUser(email, username){
-        await this.pool.query(
-            `INSERT INTO users (email, username) 
-            VALUES($1, $2)`, 
-            [email, username]
-        )
+        const results = await this.pool.query(`
+            SELECT * FROM users 
+            WHERE email = $1`,
+            [email]
+        );
 
-        return true
+        if (results.rows.length > 0) {
+            // account already exists
+            return true;
+        } else {
+            await this.pool.query(
+                `INSERT INTO users (email, username) 
+                VALUES($1, $2)`, 
+                [email, username]
+            )
+
+            return false
+        }
+
     }
 
     async checkUsername(username){
