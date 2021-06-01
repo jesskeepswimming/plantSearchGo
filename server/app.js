@@ -185,12 +185,13 @@ function App(db) {
 
 
     // get all pins within given radius- good
-    app.get("/pins/:pin_id/vicinity/:radius", async(req, res)=> {
+    app.get("/pins/vicinity/:long/:lat/:radius", async(req, res)=> {
         try { 
-            const pin_id =  Number(req.params.pin_id);
+            const long =  Number(req.params.long);
+            const lat =  Number(req.params.lat);
             const radius =  Number(req.params.radius);
             //const radius = 4000; // m
-            const pins = await db.getPinsByRadius(pin_id, radius)
+            const pins = await db.getPinsByRadius(long, lat, radius)
             res.json(pins)
 
         } catch (err) {

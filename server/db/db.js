@@ -80,19 +80,12 @@ class DB{
     }
 
 
-    async getPinsByRadius(pin_id, radius){
-        const points = await this.pool.query(`
-            SELECT geolocation FROM pins 
-            WHERE pin_id = $1`, 
-            [pin_id]
-        )
-
-        const point = points.rows[0].geolocation
+    async getPinsByRadius(longitude, latitude, radius){
 
         const pins = await this.pool.query(`
             SELECT * FROM pins 
-            WHERE ST_DWithin(geolocation, $1, $2)`, 
-            [point, radius]
+            WHERE ST_DWithin(geolocation, ST_MakePoint($1, $2), $3)`, 
+            [longitude, latitude, radius]
         )
 
         return pins.rows
