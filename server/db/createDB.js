@@ -1,8 +1,10 @@
+exports.gis = `CREATE EXTENSION postgis`
+
 exports.users = `DROP TABLE IF EXISTS users CASCADE;
 CREATE TABLE users(
     email VARCHAR(255) PRIMARY KEY,
     username VARCHAR(255) NOT NULL UNIQUE
-);`
+)`
 
 exports.pins = `DROP TABLE IF EXISTS pins CASCADE;
 CREATE TABLE pins(

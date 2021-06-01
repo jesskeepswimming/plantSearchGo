@@ -7,6 +7,7 @@ async function seed() {
     const client = await pool.connect();
 
     // build database tables
+    await client.query(createDB.gis)
     await client.query(createDB.users)
     await client.query(createDB.pins)
     await client.query(createDB.plants);
