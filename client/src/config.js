@@ -7,4 +7,4 @@ export const firebaseConfig = {
     appId: "1:783547806285:web:3fac043c9d10183c046204"
   };
 
-export const SERVER = 'localhost:5000';
+export const SERVER = 'plantsearchgo-server.herokuapp.com';

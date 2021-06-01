@@ -47,16 +47,26 @@ function ThreeDMap(props) {
   const [station, setStation] = useState(undefined);
   const [stations, setStations] = useState({});
   
+  const radians = (degree) => {
+    return degree* Math.PI / 180
+  }
+  const kmDiff= (lon1, lat1, lon2, lat2)=> {
+    var dlon = radians(lon2) - radians(lon1)
+    var dlat = radians(lat2) - radians(lat1)
+    var a = Math.pow((Math.sin(dlat/2)), 2) + Math.cos(lat1) * Math.cos(lat2) * Math.pow((Math.sin(dlon/2)),2)
+    var c = 2 * Math.atan2( Math.sqrt(a), Math.sqrt(1-a) )
+    return 6373.0 * c //(where R is the radius of the Earth)
+  } 
   // Define layout to use in Layer component
   const layoutLayer = { 'icon-image': 'pin' };
 
     useEffect(()=> {
 
-        
+      
     }, [stations]);
 
     const onStyleLoad = (map, loadEvent) => {
-
+        console.log(map)
         var k = getStations();
         setStations(k)
 
@@ -73,6 +83,15 @@ function ThreeDMap(props) {
         pitch={pitch}
         bearing={bearing}
         renderChildrenInPortal={true}
+        onMoveEnd= {(_, event) => {
+          var newCenter =  event.target.transform._center;
+          var diff = kmDiff(center[0], center[1], newCenter.lng, newCenter.lat)
+          console.log(diff)
+          if (diff>1) {
+            // refetch
+            setCenter(newCenter)
+          }
+        }}
       >
           <Layer type='circle'  paint={{'circle-color': 'red', 'circle-radius': 10}}>
               {stations ? Object.keys(stations).map((k, index)=> {

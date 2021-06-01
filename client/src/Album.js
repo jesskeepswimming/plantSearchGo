@@ -121,7 +121,7 @@ export default function Album(props) {
     console.log("deleting", plant_id)
     // e.preventDefault();
     try {
-      const response = await fetch(`http://${SERVER}/plants/${plant_id}`,{
+      const response = await fetch(`https://${SERVER}/users/${plant_id}`,{
         method: "DELETE",
         headers: {"Content-Type": "application/json"},
       })
@@ -133,6 +133,29 @@ export default function Album(props) {
       console.log(err.message)
     }
   }
+
+  const createAccount = async (email, username) => {
+
+    try {
+        const body = {
+            email:email,  
+            username: username
+        }
+
+        const response = await fetch( `https://${SERVER}/users/new`, {
+            method: "POST",
+            headers: {"Content-Type": "application/json"},
+            body: JSON.stringify(body)
+        });
+        console.log(response)
+
+    } catch (err){
+        console.log(err)
+    }
+  }
+
+  // var user = firebase.auth().currentUser;
+
 
   return (
     <React.Fragment>
@@ -187,6 +210,8 @@ export default function Album(props) {
                        // The signed-in user info.
                        var user = result.user;
                        setUser(user)
+                       console.log(user)
+                       createAccount(user.email, user.displayName)
                        // ...
                      }).catch((error) => {
                        // Handle Errors here.
