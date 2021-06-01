@@ -164,7 +164,8 @@ export function VerticalLinearStepper(props) {
           const result = {
             plant_name,
             "common_name": common_names[0],
-            "wiki_images": plant_details.wiki_images
+            "wiki_images": plant_details.wiki_images,
+            "wiki_description": plant_details.wiki_description.value
           }
 
 
@@ -252,6 +253,8 @@ export function VerticalLinearStepper(props) {
                   <GridList cellHeight={300} className={classes.gridList} cols = {1}>
                     <GridListTile key="Subheader" cols={1} style={{ height: 'auto' }}>
                     <ListSubheader component="div">{identification.common_name} ({identification.plant_name})</ListSubheader>
+                    <ListSubheader component="div"> Description: </ListSubheader>
+                    <Typography>{identification.wiki_description}</Typography>
                     <ListSubheader component="div">Similar Images</ListSubheader>
 
                     </GridListTile>
