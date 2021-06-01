@@ -14,6 +14,10 @@ import Stepper from '@material-ui/core/Stepper';
 import Step from '@material-ui/core/Step';
 import StepLabel from '@material-ui/core/StepLabel';
 import StepContent from '@material-ui/core/StepContent';
+import GridList from '@material-ui/core/GridList';
+import GridListTile from '@material-ui/core/GridListTile';
+import GridListTileBar from '@material-ui/core/GridListTileBar';
+import ListSubheader from '@material-ui/core/ListSubheader';
 
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Checkbox from '@material-ui/core/Checkbox';
@@ -54,18 +58,19 @@ const useStyles = makeStyles((theme) => ({
 
 export function VerticalLinearStepper(props) {
 
+  const {handleClose, user, setUserFunction, reloadFunction, center} = props
   const classes = useStyles();
 
   // const [currentUser, setCurrentUser] = useState(props.user)
   const [activeStep, setActiveStep] = useState(0);
   const [imageAsFile, setImageAsFile] = useState('')
   const [imageAsUrl, setImageAsUrl] = useState('')
-  const [stage, setStage] = useState("Seed")
-  const [forSale, setForSale] = useState(false)
-  const [plant, setPlant] = useState("")
-  const [variety, setvariety] = useState("")
-  const [caption, setCaption] = useState("")
+
+  const [note, setNote] = useState("")
   const [uploadStatus, setUploadStatus] = useState("")
+  const [identification, setIdentification] = useState({})
+
+
 
   const storageRef = storage.ref();
 
@@ -132,41 +137,90 @@ export function VerticalLinearStepper(props) {
         ); 
   
     }
-
   
   }
 
-  const handleNext = () => {
-    setActiveStep((prevActiveStep) => prevActiveStep + 1);
+  const handleUpload = () => {
+    // upload to backend
+    // setActiveStep((prevActiveStep) => prevActiveStep + 1);
+    onUploadData()
+    
   };
 
-  const handleBack = () => {
-    setActiveStep((prevActiveStep) => prevActiveStep - 1);
-  };
-
-  const onPostData = async (downloadURL, user) => {
+ 
+  const onPostData = (downloadURL, user) => {
 
     try {
-        const email = user ? user.email : "anonymous"
-        const plantName = plant? plant: "Unknown Plant"
 
         const body = {
-            user_id : email,
-            plant: plantName,
-            for_sale: forSale,
-            image: downloadURL,
-            variety: variety,
-            stage: stage,
-            caption: caption
+            'imageUrl': downloadURL,
+            'latitude': 0,
+            'longitude': 0,
         }
 
         console.log(body)
-        const response = await fetch(`http://${SERVER}/plants`, {
+
+        const response =  fetch(`https://${SERVER}/plants/identify`, {
+            method: "POST",
+            headers: {"Content-Type": "application/json"},
+            body: JSON.stringify(body)
+        }).then(function(response) {
+          // The response is a Response instance.
+          // You parse the data into a useable format using `.json()`
+          return response.json();
+        }).then(function(data) {
+          // `data` is the parsed version of the JSON returned from the above endpoint.
+          console.log(data);  // { "userId": 1, "id": 1, "title": "...", "body": "..." }
+
+          const {plant_name, plant_details} = data
+          const {common_names} = plant_details
+
+          const result = {
+            plant_name,
+            "common_name": common_names[0],
+            "wiki_images": plant_details.wiki_images
+          }
+
+
+          setIdentification(result)
+          setActiveStep(1);
+
+        });
+
+        
+      } catch (err){
+        console.log(err)
+    }
+    
+  }
+
+
+// Retrieve its body as ReadableStream
+
+  const onUploadData = async (user) => {
+
+    try {
+        console.log(user, props.user)
+        const body = {
+            'plant_name' : identification.plant_name,
+            'common_name': identification.common_name,
+            'plant_details': note,
+            'user': props.user.email,
+            'image': imageAsUrl,
+            'latitude': center[1],
+            'longitude':center[0]
+        }
+
+        console.log(body)
+        const response = await fetch(`https://${SERVER}/pins/upload`, {
             method: "POST",
             headers: {"Content-Type": "application/json"},
             body: JSON.stringify(body)
         });
         console.log(response)
+
+        handleClose()
+        reloadFunction()
 
     } catch (err){
         console.log(err)
@@ -177,72 +231,20 @@ export function VerticalLinearStepper(props) {
     setOpen(true)
 
     // check if signed in, if not, vreate anonymous session
-    if (!props.user) {
-      await firebase.auth().signInAnonymously()
-      .then((result) => {
-        console.log(result.user)
-
-        const tempUser = {
-          'uid': result.user.uid,
-          'email': "anon-user-"+result.user.uid,
-          'isAnonymous': true
-        }
-        props.setUserFunction(tempUser)
-
-        handleFireBaseUpload(tempUser)
-        // setCurrentUser(tempUser)
-        // Signed in..
-      })
-      .catch((error) => {
-        var errorCode = error.code;
-        var errorMessage = error.message;
-        console.log(error.message)
-        // ...
-      });
-     
-    } else {
-      handleFireBaseUpload()
-    }
-    
+    handleFireBaseUpload()
    
     // props.handleClose();
 
   };
 
-  const handleStageChange = (e) => {
-    setStage(e.target.value)
-  };
 
 
-  const steps = ['Create a Plant Profile', 'Upload your post'];
+  const steps = ['Identify Plant', 'Upload plant to your location'];
 
   const getStepContent = (step) => {
     switch (step) {
+      
       case 0:
-        return <form>
-                  <div>                 
-                       <TextField required id="standard-required" label="Plant" defaultValue="" onChange={e => setPlant(e.target.value)} />
-                  </div>
-                  <div>
-                      <TextField id="standard-required" label="Variety " defaultValue={""} onChange={e => setvariety(e.target.value)}/>
-                  </div>
-                  <div>
-                  <FormControlLabel
-                      control={
-                      <Checkbox
-                          checked={forSale}
-                          onChange={e => {
-                              setForSale(e.target.checked)
-                          }}
-                          name="forSale"
-                          color="primary"
-                      />
-                      }
-                      label="For Sale"
-                  />
-                  </div>
-              </form>
-      case 1:
         return <form>
            
             <input
@@ -250,29 +252,38 @@ export function VerticalLinearStepper(props) {
                 onChange={handleImageAsFile}
                 // hidden
             />
-             <div>
-            <FormControl className={classes.formControl}>
-                <InputLabel id="demo-simple-select-label">Stage</InputLabel>
-                <Select
-                labelId="demo-simple-select-label"
-                id="demo-simple-select"
-                value={stage}
-                onChange={handleStageChange}
-                >
-                <MenuItem value='Seed'>Seed</MenuItem>
-                <MenuItem value='Seedling'>Seedling</MenuItem>
-                <MenuItem value='Flowering'>Flowering</MenuItem>
-                <MenuItem value='Fruiting'>Fruiting</MenuItem>
-                <MenuItem value='Mature'>Mature</MenuItem>
-                </Select>
-            </FormControl>
-            </div>
+          
             <div>
-                <TextField id="standard-required" label="Caption" defaultValue={""} onChange={e => setCaption(e.target.value)} />
+                <TextField id="standard-required" label="Caption" defaultValue={""} onChange={e => setNote(e.target.value)} />
             </div>
 
 
         </form>;
+      case 1:
+        return <div>
+               
+                  <div className={classes.root}>
+                  <GridList cellHeight={300} className={classes.gridList} cols = {1}>
+                    <GridListTile key="Subheader" cols={1} style={{ height: 'auto' }}>
+                    <ListSubheader component="div">{identification.common_name} ({identification.plant_name})</ListSubheader>
+                    <ListSubheader component="div">Similar Images</ListSubheader>
+
+                    </GridListTile>
+                    {identification.wiki_images ? identification.wiki_images.map((tile, i) => (
+                      <GridListTile key={i}>
+                        <img src={tile.value} alt={tile.citation} />
+                        <GridListTileBar
+                          subtitle = {tile.citation}
+                          // actionIcon={
+                            
+                          // }
+                        />
+                      </GridListTile>
+                    )): ""}
+                  </GridList>
+                </div>
+
+            </div>
       default:
         return 'Unknown step';
     }
@@ -280,7 +291,7 @@ export function VerticalLinearStepper(props) {
   
   const [open, setOpen] = useState(false)
 
-  const handleClose = (event, reason) => {
+  const handleCloseHere = (event, reason) => {
     if (reason === 'clickaway') {
       return;
     }
@@ -291,11 +302,17 @@ export function VerticalLinearStepper(props) {
   useEffect(() => {
     // Update the document title using the browser API
     if (uploadStatus == "success") {
-      props.handleClose()
-      props.reloadFunction();
+      // props.handleClose()
+      // props.reloadFunction();
     }
     
   }, [uploadStatus]);
+
+  useEffect(() => {
+    // Update the document title using the browser API
+    
+    
+  }, [identification]);
 
   return (
     <div className={classes.root}>
@@ -311,9 +328,9 @@ export function VerticalLinearStepper(props) {
                   <Button
                     variant="contained"
                     color="primary"
-                    onClick={activeStep === steps.length - 1 ? handleSubmit : handleNext}
+                    onClick={activeStep === steps.length - 1 ? handleUpload : handleSubmit}
                     className={classes.button}
-                    disabled={uploadStatus != ""}
+                    // disabled={uploadStatus != ""}
                   >
                     {activeStep === steps.length - 1 ? 'Finish' : 'Next'}
                   </Button>
@@ -327,7 +344,7 @@ export function VerticalLinearStepper(props) {
        message={uploadStatus}
        action={
          <React.Fragment>
-           <IconButton size="small" aria-label="close" color="inherit" onClick={handleClose}>
+           <IconButton size="small" aria-label="close" color="inherit" onClick={handleCloseHere}>
              <CloseIcon fontSize="small" />
            </IconButton>
          </React.Fragment>
@@ -380,6 +397,7 @@ const styles = (theme) => ({
   }))(MuiDialogActions);
   
 export default function CustomizedDialogs(props) {
+    const {user, center} = props 
   
     const [open, setOpen] = React.useState(false);
   
@@ -400,7 +418,7 @@ export default function CustomizedDialogs(props) {
             New Plant Profile
           </DialogTitle>
           <DialogContent dividers>
-            <VerticalLinearStepper handleClose= {handleClose} user={props.user} setUserFunction={props.setUserFunction} reloadFunction={props.reloadFunction}/>
+            <VerticalLinearStepper handleClose= {handleClose} user={user} setUserFunction={props.setUserFunction} reloadFunction={props.reloadFunction} center={center}/>
           </DialogContent>
           {/* <DialogActions>
          

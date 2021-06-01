@@ -14,11 +14,6 @@ import Container from '@material-ui/core/Container';
 import Link from '@material-ui/core/Link';
 import {firebase} from "./App";
 import CustomizedDialogs from "./Upload"
-import PostDialog from "./Posts"
-import { Badge } from '@material-ui/core';
-import AddIcon from '@material-ui/icons/Add';
-import DeleteIcon from '@material-ui/icons/Delete';
-import AddPost from './AddPost';
 import EcoIcon from '@material-ui/icons/Eco';
 import {SERVER} from  "./config"
 import ThreeDMap from './MyMap';
@@ -78,30 +73,21 @@ export default function Album(props) {
   const [isOpen, setIsOpen] = useState(false)
   const [pinId, setPinId] = useState(undefined)
   const [pinPlants, setPinPlants] = useState([]);
+  const [center, setCenter] = useState([-80.544861, 43.472286])
+  const [openCollection, setOpenCollection] = useState(false)
+  const [collectionPlants, setCollectionPlants] = useState([])
+
   useEffect(() => {
     // Update the document title using the browser API
 
-    onFetchData()
+    
   }, [reload]);
 
 
   const triggerFetch = () => {
     setReload(reload+1)
   }
-  const onFetchData = async e => {
-
-    // e.preventDefault();
-    // try {
-    //   const response = await fetch(`http://${SERVER}/plants/search`)
-    //   const jsonData = await response.json()
-
-    //   console.log(jsonData)
-    //   setCards(jsonData)
-    // } catch (err) {
-    //   console.log(err.message)
-    // }
-  }
-
+  
   const onPinClick = (pin_id) => {
     console.log(pin_id)
     getPlants(pin_id)
@@ -114,6 +100,11 @@ export default function Album(props) {
     console.log("close")
     setPinId(undefined)
     setIsOpen(false)
+  }
+
+  const handleCloseCollection = () => {
+    console.log("close")
+    setOpenCollection(false)
   }
 
 
@@ -135,6 +126,10 @@ export default function Album(props) {
     }
   }
 
+  const handleCenterChange = (c) => {
+    setCenter(c)
+  }
+
   
   const getPlants = async (pin_id) => {
 
@@ -143,6 +138,20 @@ export default function Album(props) {
       const jsonData = await response.json()
       console.log(jsonData)
       setPinPlants(jsonData)
+    
+    } catch (err) {
+      console.log(err.message)
+    }
+  
+  }
+
+  const getUserPlants = async () => {
+
+    try {
+      const response = await fetch(`https://${SERVER}/users/${user.email}/plants`)
+      const jsonData = await response.json()
+      console.log(jsonData)
+      setCollectionPlants(jsonData)
     
     } catch (err) {
       console.log(err.message)
@@ -170,7 +179,10 @@ export default function Album(props) {
     }
   }
 
-  // var user = firebase.auth().currentUser;
+  const handleOpenCollection = () => {
+    getUserPlants()
+    setOpenCollection(true)
+  }  
 
 
   return (
@@ -242,61 +254,33 @@ export default function Album(props) {
                   }}>
                     Sign In
                   </Button>
-
+                  
                 }
+                
                 </Grid>
+               
                 <Grid item>
-                  {/* <Button variant="outlined" color="primary">
-                    Secondary action
-                  </Button> */}
-                  <CustomizedDialogs user={user} reloadFunction={triggerFetch} setUserFunction={setUser}/>
+          
+                  <CustomizedDialogs user={user} reloadFunction={triggerFetch} setUserFunction={setUser} center={center}/>
+                  
+                </Grid>
+                <Grid item> 
+                <Button variant="outlined" color="primary" disabled={!user} onClick={handleOpenCollection}>
+                  My Collection
+                </Button>
                 </Grid>
               </Grid>
             </div>
           </Container>
         </div>
-        <ThreeDMap onPinClick={onPinClick}/>
+
+        <ThreeDMap onPinClick={onPinClick} center={center} handleCenterChange={handleCenterChange} reload={reload}/>
         <PinPlants isOpen={isOpen} pin_id={pinId} handleClose={handleClose} pinPlants={pinPlants}/>
 
+        <PinPlants isOpen={openCollection} pin_id={user? user.displayName: ""} handleClose={handleCloseCollection} pinPlants={collectionPlants}/>
+
         <Container className={classes.cardGrid} maxWidth="md">
-          {/* End hero unit */}
-
-          {/* <Grid container spacing={4}>
-            {cards.map((card) => (
-              <Grid item key={card.plant_id} xs={12} sm={6} md={4}>
-                <Badge badgeContent={card.for_sale ? "selling": ""} color="secondary" invisible={card.for_sale ? false:true}>
-                  <Card className={classes.card}>
-                    <CardMedia
-                      className={classes.cardMedia}
-                      image={card.image}
-                      title="Image title"
-                    />
-                    <CardContent className={classes.cardContent}>
-                      <Typography gutterBottom variant="h5" component="h2">
-                        {card.plant}
-                      </Typography>
-                      <Typography> 
-                        by {!user || card.user_id != user.email ?  (card.user_id.startsWith("anon-user") ? "Anonymous" : card.user_id) : "Me"} 
-                      </Typography>
-                    </CardContent>
-                    <CardActions>
-                    
-                      <PostDialog card={card}  />
-
-                      <Button size="small" color="primary" disabled={!user || card.user_id != user.email}>
-                        {!user || card.user_id != user.email ? "" : <AddPost user={user} reloadFunction={triggerFetch} plant_id = {card.plant_id}/>}
-                      </Button>
-
-                      <Button size="small" color="primary" disabled={!user || card.user_id != user.email} onClick={() => onDeleteData(card.plant_id)}>
-                      {!user || card.user_id != user.email ? "" : <DeleteIcon/>}
-                      </Button>
-
-                    </CardActions>
-                  </Card>
-                  </Badge>
-              </Grid>
-            ))}
-          </Grid> */}
+       
         </Container>
       </main>
       {/* Footer */}

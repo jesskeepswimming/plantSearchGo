@@ -29,9 +29,7 @@ const paintLayer = {
 
 function ThreeDMap(props) {
 
-  const {onPinClick} = props
-  const [fitBounds, setFitBounds] = useState(undefined);
-  const [center, setCenter] = useState([-80.544861, 43.472286]);
+  const {onPinClick, center, handleCenterChange, reload} = props
   const [lastFetchCenter, setLastFetchCenter] = useState([-80.544861, 43.472286]);
   const [zoom, setZoom] = useState([50]);
   const [bearing, setBearing] = useState([-60]);
@@ -43,7 +41,7 @@ function ThreeDMap(props) {
     return degree* Math.PI / 180
   }
 
-  const kmDiff= (lon1, lat1, lon2, lat2)=> {
+  const kmDiff= (lon1, lat1, lon2  = lastFetchCenter[0], lat2= lastFetchCenter[1])=> {
     var dlon = radians(lon2) - radians(lon1)
     var dlat = radians(lat2) - radians(lat1)
     var a = Math.pow((Math.sin(dlat/2)), 2) + Math.cos(lat1) * Math.cos(lat2) * Math.pow((Math.sin(dlon/2)),2)
@@ -51,30 +49,38 @@ function ThreeDMap(props) {
     return 6373.0 * c //(where R is the radius of the Earth)
   } 
 
-  const getStations = async e => {
+  const getStations = async (long, lat) => {
+    setLastFetchCenter([long, lat])
 
     try {
       const vicinity = 1000
-      const response = await fetch(`https://${SERVER}/pins/5/vicinity/${vicinity}`)
+      const response = await fetch(`https://${SERVER}/pins/vicinity/${long}/${lat}/${vicinity}`)
       const jsonData = await response.json()
       console.log(jsonData)
       setStations(jsonData)
-    
+      
     } catch (err) {
       console.log(err.message)
     }
   
   }
 
+  useEffect(()=> {
+    if (reload>0) getStations(center[0], center[1])
+    console.log(reload)
+  }, [reload])
   
-  
-  // useEffect(()=> {
-    
-  // }, [stations]);
+  useEffect(()=> {
+    var diff = kmDiff(center[0], center[1])
+    console.log(diff, center)
+    if (diff>1) {
+      getStations(center[0], center[1])
+    }
+  }, [center]);
 
    
     const onStyleLoad = (map, loadEvent) => {
-      getStations()
+       getStations(-80.544861, 43.472286)
     };
 
     return (
@@ -90,12 +96,9 @@ function ThreeDMap(props) {
         onMoveEnd= {(_, event) => {
           
           var newCenter =  event.target.transform._center;
-          setCenter([newCenter.lng, newCenter.lat])
-          var diff = kmDiff(lastFetchCenter[0], lastFetchCenter[1], newCenter.lng, newCenter.lat)
-          if (diff>1) {
-            // refetch
-            setLastFetchCenter([newCenter.lng, newCenter.lat])
-          }
+          // setCenter([newCenter.lng, newCenter.lat])
+          handleCenterChange([newCenter.lng, newCenter.lat])
+          
         }}
       >
           <Layer type='circle'  paint={{'circle-color': 'red', 'circle-radius': 10}}>
@@ -120,8 +123,6 @@ function ThreeDMap(props) {
         >
           
         </Layer>
-        
-       
       
       
      </Map>
