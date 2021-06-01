@@ -141,7 +141,7 @@ export default function Album(props) {
         <Toolbar>
           <EcoIcon className={classes.icon} />
           <Typography variant="h6" color="inherit" noWrap>
-            Plantsta
+          PlantSearchGo!
           </Typography>
         </Toolbar>
       </AppBar>
@@ -149,9 +149,9 @@ export default function Album(props) {
         {/* Hero unit */}
         <div className={classes.heroContent}>
           <Container maxWidth="sm">
-            <Typography component="h1" variant="h3" align="center" color="textPrimary" gutterBottom>
+            {/* <Typography component="h1" variant="h3" align="center" color="textPrimary" gutterBottom>
               PlantSearchGo!
-            </Typography>
+            </Typography> */}
             <Typography variant="h6" align="center" color="textSecondary" paragraph>
               Document and collect nearby plants!
             </Typography>

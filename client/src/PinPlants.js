@@ -163,7 +163,9 @@ export default function PinPlants(props) {
                 
           </DialogContent>
           <DialogActions>
-            <Button> Message Seller</Button>
+            <Button
+                onClick={()=> console.log('add plant to this pin')}
+            > Add to pin</Button>
           </DialogActions>
         </Dialog>
       </div>

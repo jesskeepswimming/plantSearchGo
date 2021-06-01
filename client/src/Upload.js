@@ -380,7 +380,7 @@ const styles = (theme) => ({
   }))(MuiDialogActions);
   
 export default function CustomizedDialogs(props) {
-
+  
     const [open, setOpen] = React.useState(false);
   
     const handleClickOpen = () => {
@@ -392,7 +392,7 @@ export default function CustomizedDialogs(props) {
   
     return (
       <div>
-        <Button variant="outlined" color="primary" onClick={handleClickOpen}>
+        <Button variant="outlined" color="primary" disabled={!props.user} onClick={handleClickOpen}>
           Upload Plant 
         </Button>
         <Dialog onClose={handleClose} aria-labelledby="customized-dialog-title" open={open}>
