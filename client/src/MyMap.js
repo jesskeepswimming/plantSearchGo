@@ -27,7 +27,6 @@ const paintLayer = {
 
 
 
-
 function ThreeDMap(props) {
 
   const {onPinClick} = props
@@ -42,16 +41,6 @@ function ThreeDMap(props) {
 
   const radians = (degree) => {
     return degree* Math.PI / 180
-  }
-
-
-  const getStations2 = () =>{
-    return [
-     { "pin_id": 'a', 
-        "latitude": 43.472286, 
-        "longitude":-80.544861
-      }
-    ]
   }
 
   const kmDiff= (lon1, lat1, lon2, lat2)=> {
