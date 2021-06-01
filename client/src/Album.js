@@ -77,7 +77,7 @@ export default function Album(props) {
   const [reload, setReload] = useState(0)
   const [isOpen, setIsOpen] = useState(false)
   const [pinId, setPinId] = useState(undefined)
-
+  const [pinPlants, setPinPlants] = useState([]);
   useEffect(() => {
     // Update the document title using the browser API
 
@@ -104,6 +104,7 @@ export default function Album(props) {
 
   const onPinClick = (pin_id) => {
     console.log(pin_id)
+    getPlants(pin_id)
     setPinId(pin_id)  
     setIsOpen(true)
       
@@ -132,6 +133,21 @@ export default function Album(props) {
     } catch (err) {
       console.log(err.message)
     }
+  }
+
+  
+  const getPlants = async (pin_id) => {
+
+    try {
+      const response = await fetch(`https://${SERVER}/pins/${pin_id}/plants`)
+      const jsonData = await response.json()
+      console.log(jsonData)
+      setPinPlants(jsonData)
+    
+    } catch (err) {
+      console.log(err.message)
+    }
+  
   }
 
   const createAccount = async (email, username) => {
@@ -240,7 +256,7 @@ export default function Album(props) {
           </Container>
         </div>
         <ThreeDMap onPinClick={onPinClick}/>
-        <PinPlants isOpen={isOpen} pin_id={pinId} handleClose={handleClose}/>
+        <PinPlants isOpen={isOpen} pin_id={pinId} handleClose={handleClose} pinPlants={pinPlants}/>
 
         <Container className={classes.cardGrid} maxWidth="md">
           {/* End hero unit */}

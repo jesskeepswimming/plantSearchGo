@@ -42,15 +42,14 @@ const useStyles = makeStyles((theme) => ({
       <div className={classes.root}>
         <GridList cellHeight={300} className={classes.gridList} cols = {1}>
           <GridListTile key="Subheader" cols={1} style={{ height: 'auto' }}>
-        <ListSubheader component="div">{"a"} by {"b"}</ListSubheader>
           </GridListTile>
           {itemData.map((tile) => (
-            <GridListTile key={tile.post_id}>
-              <img src={tile.image} alt={tile.caption} />
+            <GridListTile key={tile.plant_id}>
+              <img src={tile.image} alt={tile.plant_details} />
               <GridListTileBar
-                title={tile.stage}
-                //{<Typography variant="subtitle1">{tile.stage}</Typography>}
-                subtitle = {tile.caption + " - " + tile.date_posted}
+                title={tile.plant_name + ', ' + tile.plant_scientific_name}
+                // <Typography> variant="subtitle1">{tile.scientific_name}</Typography>
+                subtitle = {tile.date_posted + "," + tile.user_id}
                 // {
                 //     <div>
                 //         <Typography variant="caption" >{tile.caption}</Typography>
@@ -58,7 +57,7 @@ const useStyles = makeStyles((theme) => ({
                 //     </div>
                 // }
                 actionIcon={
-                  <IconButton aria-label={`info about ${tile.caption}`} className={classes.icon}>
+                  <IconButton aria-label={`info about ${tile.plant_id}`} className={classes.icon}>
                     <FavoriteIcon />
                   </IconButton>
                 }
@@ -112,31 +111,30 @@ const styles = (theme) => ({
   
 export default function PinPlants(props) {
     // const card = props.card
-    const {isOpen, pin_id, handleClose} = props
+    const {isOpen, pin_id, handleClose, pinPlants} = props
     const [open, setOpen] = React.useState(false);
     const [ itemData, setItemData ] = React.useState([]);
 
     
-    const onFetchData = async (pin_id) => {
+    // const onFetchData = async (pin_id) => {
 
-        // e.preventDefault();
-        try {
-        // const response = await fetch(`http://${SERVER}/posts/${plant_id}`)
-            // const jsonData = await response.json()
-            const jsonData = []
-            console.log(jsonData)
-            setItemData(jsonData)
-        } catch (err) {
-            console.log(err.message)
-        }
-    }
+    //     // e.preventDefault();
+    //     try {
+    //     // const response = await fetch(`http://${SERVER}/posts/${plant_id}`)
+    //         // const jsonData = await response.json()
+    //         const jsonData = []
+    //         console.log(jsonData)
+    //         setItemData(jsonData)
+    //     } catch (err) {
+    //         console.log(err.message)
+    //     }
+    // }
 
     useEffect(()=> {
         if (isOpen){
-            onFetchData(pin_id)
             setOpen(true)
         } 
-    }, [isOpen, pin_id])
+    }, [isOpen])
 
     // const handleClickOpen = () => {
     //     onFetchData()
@@ -159,13 +157,13 @@ export default function PinPlants(props) {
             {pin_id}
           </DialogTitle>
           <DialogContent dividers>
-          {itemData.length > 0? <TitlebarGridList itemData={itemData}/> : ''}
+          {pinPlants ? <TitlebarGridList itemData={pinPlants}/> : ''}
                 
           </DialogContent>
           <DialogActions>
             <Button
                 onClick={()=> console.log('add plant to this pin')}
-            > Add to pin</Button>
+            > Add photo to pin</Button>
           </DialogActions>
         </Dialog>
       </div>

@@ -1,6 +1,7 @@
 
 import React, { useState, useEffect } from "react";
 import ReactMapboxGl, {Layer, Feature, GeoJSONLayer} from "react-mapbox-gl";
+import {SERVER} from  "./config"
 
 const { token } = require('./config.json');
 
@@ -24,16 +25,8 @@ const paintLayer = {
   'fill-extrusion-opacity': 0.6
 };
 
-const getStations = () =>{
-  return {
-    "pin_id_a": {
-      "position": [-80.544861, 43.472286]
-    },
-    "pin_id_b": {
       "position": [43.472286, -80.544861]
-    },
-  }
-}
+
 
 
 function ThreeDMap(props) {
@@ -41,15 +34,27 @@ function ThreeDMap(props) {
   const {onPinClick} = props
   const [fitBounds, setFitBounds] = useState(undefined);
   const [center, setCenter] = useState([-80.544861, 43.472286]);
+  const [lastFetchCenter, setLastFetchCenter] = useState([-80.544861, 43.472286]);
   const [zoom, setZoom] = useState([50]);
   const [bearing, setBearing] = useState([-60]);
   const [pitch, setPitch] = useState([80]);
-  const [station, setStation] = useState(undefined);
-  const [stations, setStations] = useState({});
-  
+  const [stations, setStations] = useState([]);
+
+
   const radians = (degree) => {
     return degree* Math.PI / 180
   }
+
+
+  const getStations2 = () =>{
+    return [
+     { "pin_id": 'a', 
+        "latitude": 43.472286, 
+        "longitude":-80.544861
+      }
+    ]
+  }
+
   const kmDiff= (lon1, lat1, lon2, lat2)=> {
     var dlon = radians(lon2) - radians(lon1)
     var dlat = radians(lat2) - radians(lat1)
@@ -57,21 +62,32 @@ function ThreeDMap(props) {
     var c = 2 * Math.atan2( Math.sqrt(a), Math.sqrt(1-a) )
     return 6373.0 * c //(where R is the radius of the Earth)
   } 
-  // Define layout to use in Layer component
-  const layoutLayer = { 'icon-image': 'pin' };
 
-    useEffect(()=> {
+  const getStations = async e => {
 
-      
-    }, [stations]);
+    try {
+      const vicinity = 1000
+      const response = await fetch(`https://${SERVER}/pins/5/vicinity/${vicinity}`)
+      const jsonData = await response.json()
+      console.log(jsonData)
+      setStations(jsonData)
+    
+    } catch (err) {
+      console.log(err.message)
+    }
+  
+  }
 
+  
+  
+  // useEffect(()=> {
+    
+  // }, [stations]);
+
+   
     const onStyleLoad = (map, loadEvent) => {
-        console.log(map)
-        var k = getStations();
-        setStations(k)
-
+      getStations()
     };
-
 
     return (
       <Map
@@ -84,24 +100,24 @@ function ThreeDMap(props) {
         bearing={bearing}
         renderChildrenInPortal={true}
         onMoveEnd= {(_, event) => {
+          
           var newCenter =  event.target.transform._center;
-          var diff = kmDiff(center[0], center[1], newCenter.lng, newCenter.lat)
-          console.log(diff)
+          setCenter([newCenter.lng, newCenter.lat])
+          var diff = kmDiff(lastFetchCenter[0], lastFetchCenter[1], newCenter.lng, newCenter.lat)
           if (diff>1) {
             // refetch
-            setCenter(newCenter)
+            setLastFetchCenter([newCenter.lng, newCenter.lat])
           }
         }}
       >
           <Layer type='circle'  paint={{'circle-color': 'red', 'circle-radius': 10}}>
-              {stations ? Object.keys(stations).map((k, index)=> {
+              {stations.map((item) => {
                   return <Feature
-                    key = {k}
-    
-                    onClick={() => onPinClick(k)}
-                    coordinates = {stations[k].position}
+                    key = {item.pin_id}
+                    onClick={() => onPinClick(item.pin_id)}
+                    coordinates = {[item.longitude, item.latitude]}
                   />
-            }): ''}
+            })}
           </Layer>
 
       
