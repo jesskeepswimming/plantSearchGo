@@ -25,7 +25,6 @@ const paintLayer = {
   'fill-extrusion-opacity': 0.6
 };
 
-      "position": [43.472286, -80.544861]
 
 
 
