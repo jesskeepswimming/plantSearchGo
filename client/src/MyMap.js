@@ -1,10 +1,13 @@
 
 import React, { useState, useEffect } from "react";
-import ReactMapboxGl, {Layer, Feature} from "react-mapbox-gl";
 import {SERVER} from  "./config"
+import ReactMapboxGl, {Layer, Feature} from "react-mapbox-gl";
+import mapboxgl from "mapbox-gl";
+
+// eslint-disable-next-line import/no-webpack-loader-syntax, import/no-unresolved
+mapboxgl.workerClass = require("worker-loader!mapbox-gl/dist/mapbox-gl-csp-worker").default;
 
 const { token } = require('./config.json');
-
 const Map = ReactMapboxGl({ accessToken: token });
 
 const mapStyle = {
