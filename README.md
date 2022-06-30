@@ -2,6 +2,7 @@
 
 
 ## Visit the live site at 
+https://plantsearchgo.herokuapp.com/
 
 ## API documentation: 
 
