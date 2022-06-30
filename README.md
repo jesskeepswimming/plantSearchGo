@@ -4,7 +4,11 @@
 ## Visit the live site at 
 https://plantsearchgo.herokuapp.com/
 
-## API documentation: 
+## How It Works:
+1. Browse the map using shift + arrow keys. Click on red dots to see community plant submissions.
+2. To add, identify, and track your plants, create an account.
+3. Upload a picture of a plant at your map location and our software will identify the plant for you using computer vision!
+4. Confirm your submission and your plant will appear on the map as a red dot!
 
 ## To run locally: 
 
